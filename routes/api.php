@@ -19,9 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api'], function()
-{
-    Route::get("/users", "UsersController@users");
+Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api'], function () {
     Route::post("/login", "AuthController@login");
+    Route::get("/users", "UsersController@users");
     Route::get("/logout", "AuthController@logout");
+    Route::post("/register", "AuthController@register");
+    Route::post("report/register", "ReportsController@register");
 });
