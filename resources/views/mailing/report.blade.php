@@ -1,5 +1,8 @@
 <html>
     <body>
-        <h3>Has recibido un reporte, favor de revisarlo a la brevedad posible</h3>
+        <h3>you have received a report with the following information, Please reply as soon as possible</h3>
+        <p><b>Incident type: </b> {{ $incident }}</p>
+        <p><b>Urgency: </b> {{ $urgency }}</p>
+        <p><b>Description: </b>{{ $description }}</p>
     </body>
 </html>

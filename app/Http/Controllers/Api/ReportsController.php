@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Report;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ReportsController extends Controller
 {
@@ -27,7 +26,15 @@ class ReportsController extends Controller
                 'urgency' => $request->urgency,
                 'description' => $request->description,
             ]);
-            Report::sendMail(storage_path() . $image);
+
+            $data = [
+                "incident" => $request->incident,
+                'urgency' => $request->urgency,
+                'description' => $request->description,
+                "image" => storage_path() . $image,
+            ];
+
+            Report::sendMail($data);
         }catch(\Exception $ex){
             \Log::info($ex);
         }

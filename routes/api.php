@@ -25,4 +25,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api'], fun
     Route::get("/logout", "AuthController@logout");
     Route::post("/register", "AuthController@register");
     Route::post("report/register", "ReportsController@register");
+
+    Route::get("/getPlaces", "PlacesController@getPlaces");
+    Route::get("/getIncidents", "IncidentsController@getIncidents");
 });

@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+include("incidents.php");
+include("places.php");
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->to("/dashboard");
 });
 
 Route::get('/dashboard', function () {

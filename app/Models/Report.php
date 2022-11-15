@@ -16,12 +16,12 @@ class Report extends Model
         'description'
     ];
 
-    public static function sendMail($file){
-        Mail::send("mailing.report", [], function($mailing) use($file){
+    public static function sendMail($data){
+        Mail::send("mailing.report", $data, function($mailing) use($data){
             $mailing->subject("Report");
             $mailing->from("miguel.a.hernandez0@gmail.com", "Whirlpool");
             $mailing->to("miguel_hernandez_teknna@whirlpool.com");
-            $mailing->attach($file);
+            $mailing->attach($data["image"]);
         });
 
     }
