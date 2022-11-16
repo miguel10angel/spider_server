@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Report;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -14,30 +15,31 @@ class ReportsController extends Controller
         $response = [
             "success" => true,
             "message" => "Report sent",
-            "token" => Str::random(60),
-            "user" => "Mike",
         ];
+
+        $user = User::where("email", $request->user)->first();
+        $user->refreshToken();
+        $user->fresh();
 
         try{
             $image = $this->convertImage($request->image);
-            Report::create([
-                'incident' => $request->incident_type,
-                'image' => $image,
-                'urgency' => $request->urgency,
-                'description' => $request->description,
-            ]);
+            $report = new Report();
+            $report->incident_id = $request->incident_type;
+            $report->place_id = $request->place;
+            $report->image = $image;
+            $report->urgency = $request->urgency;
+            $report->description = $request->description;
+            $report->user_id = $user->id;
+            $report->save();
 
-            $data = [
-                "incident" => $request->incident,
-                'urgency' => $request->urgency,
-                'description' => $request->description,
-                "image" => storage_path() . $image,
-            ];
-
-            Report::sendMail($data);
+            $report->sendMail();
         }catch(\Exception $ex){
-            \Log::info($ex);
+            $response["message"] = "An error happened, try again";
+            $response["success"] = false;
         }
+
+        $response["token"] = $user->api_token;
+        $response["user"] = $user->email;
 
         return response($response, 200);
     }

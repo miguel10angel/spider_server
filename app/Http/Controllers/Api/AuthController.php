@@ -33,7 +33,7 @@ class AuthController extends Controller
             $response = [
                 "success" => true,
                 "token" => Str::random(60),
-                "user" => auth()->user()->name
+                "user" => auth()->user()->email
             ];
         } else {
             $response = [
@@ -70,26 +70,42 @@ class AuthController extends Controller
             $response["message"] = $validator->errors()->first();
         }
 
+        if(!$this->validateMail($request->email)){
+            $response["message"] = "Invalid mail, enter your whirlpool mail";
+            return response($response, 200);
+        }
+
         try {
+            $pwd = Str::random(8);
             $user = User::create([
                 'name' => "$request->fname $request->lname",
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'api_token' => Str::random(60),
+                'password' => Hash::make($pwd),
+                'api_token' => hash('sha256', Str::random(60)),
             ]);
 
             event(new Registered($user));
-            Auth::login($user);
+            $user->sendPassword($pwd);
 
             $response = [
                 "success" => true,
                 "user" => $user->name,
                 "token" => $user->api_token,
+                "message" => "Your password was send to your mail, please review it",
             ];
 
         } catch (\Throwable $th) {
-            \Log::info($th);
+            $response["message"] = "An error happened, try again";
         }
         return response($response, 200);
+    }
+
+    public function validateMail($mail){
+        $mail_parts = explode("@", $mail);
+        $domain = $mail_parts[1];
+        if (strtolower($domain)  == "whirlpool.com") {
+            return true;
+        }
+        return false;
     }
 }

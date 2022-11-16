@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -42,4 +44,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function refreshToken(){
+        $token = Str::random(60);
+
+        $this->api_token = hash('sha256', $token);
+        $this->save();
+    }
+
+    public function sendPassword($password){
+        $data = [
+            'pwd' => $password
+        ];
+
+        $user = $this;
+
+        Mail::send("mailing.password", $data, function($mailing) use($user){
+            $mailing->subject("Spider - Password");
+            $mailing->from("miguel.a.hernandez0@gmail.com", "Whirlpool");
+            $mailing->to($user->email);
+        });
+    }
 }
