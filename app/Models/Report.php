@@ -26,12 +26,12 @@ class Report extends Model
             'place' => $this->place->title,
         ];
 
-        $user = $this->user;
+        $incident = $this->incident;
 
-        Mail::send("mailing.report", $data, function($mailing) use($data, $user){
+        Mail::send("mailing.report", $data, function($mailing) use($data, $incident){
             $mailing->subject("Report");
             $mailing->from("miguel.a.hernandez0@gmail.com", "Whirlpool");
-            $mailing->to($user->email);
+            $mailing->to($incident->mail);
             $mailing->attach($data["image"]);
         });
     }
