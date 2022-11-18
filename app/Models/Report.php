@@ -16,6 +16,10 @@ class Report extends Model
         'description'
     ];
 
+    public function getPlaceTitleAttribute(){
+        return $this->place ? $this->place->title : $this->other_place;
+    }
+
     public function sendMail()
     {
         $data = [
@@ -23,7 +27,7 @@ class Report extends Model
             'urgency' => $this->urgency,
             'description' => $this->description,
             "image" => storage_path() . $this->image,
-            'place' => $this->place->title,
+            'place' => $this->placeTitle,
         ];
 
         $incident = $this->incident;

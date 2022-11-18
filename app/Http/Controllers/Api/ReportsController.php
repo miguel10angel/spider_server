@@ -30,6 +30,7 @@ class ReportsController extends Controller
             $report->urgency = $request->urgency;
             $report->description = $request->description;
             $report->user_id = $user->id;
+            $report->other_place = $request->otherPlaceDescription;
             $report->save();
 
             $report->sendMail();

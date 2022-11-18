@@ -11,6 +11,12 @@ class PlacesController extends Controller
 {
     public function getPlaces(Request $request){
         $places = Place::orderBy("title")->get();
+
+        $place = new Place();
+        $place->id = 0;
+        $place->title = "Other";
+        $places->push($place);
+
         $response = [
             "success" => true,
             "places" => $places,
